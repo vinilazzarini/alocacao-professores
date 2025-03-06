@@ -11,7 +11,7 @@ ARQUIVO_SOFTWARES = "softwares_laboratorio.csv"
 # Criar arquivos caso não existam
 for arquivo, colunas in [
     (ARQUIVO_PROFESSORES, ["Nome", "Área", "Modalidades", "Disponibilidade"]),
-    (ARQUIVO_DISCIPLINAS, ["Nome", "Necessita_Lab", "Modalidade", "Créditos_Semanais"]),
+    (ARQUIVO_DISCIPLINAS, ["Nome", "Necessita_Lab", "Modalidade", "Créditos_Semanais", "Área"]),
     (ARQUIVO_TURMAS, ["Curso", "Período", "Quantidade_Alunos", "Disciplinas"]),
     (ARQUIVO_SALAS, ["Nome", "Tipo", "Capacidade"]),
     (ARQUIVO_SOFTWARES, ["Laboratorio", "Softwares"])
@@ -96,7 +96,7 @@ def cadastrar_professor():
     novo_professor.to_csv(ARQUIVO_PROFESSORES, mode='a', header=False, index=False)
     print(f"Professor {nome} cadastrado com sucesso!")
 
-# Cadastro de disciplinas
+# Cadastro de disciplinas (com área)
 def cadastrar_disciplina():
     nome = input("Nome da disciplina: ")
     necessidade_lab = input("Precisa de laboratório? (Sim/Não): ").strip().lower() == "sim"
@@ -111,12 +111,15 @@ def cadastrar_disciplina():
             break
         except ValueError:
             print("Erro: Digite um número válido para os créditos semanais.")
+    
+    area = input("Área da disciplina (ex: Desenvolvimento, Infraestrutura, Outros): ").strip()
 
     nova_disciplina = pd.DataFrame([{
         "Nome": nome,
         "Necessita_Lab": necessidade_lab,
         "Modalidade": modalidade,
-        "Créditos_Semanais": creditos
+        "Créditos_Semanais": creditos,
+        "Área": area
     }])
 
     nova_disciplina.to_csv(ARQUIVO_DISCIPLINAS, mode='a', header=False, index=False)
