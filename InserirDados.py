@@ -23,6 +23,12 @@ for arquivo, colunas in [
 def carregar_dados(arquivo):
     return pd.read_csv(arquivo)
 
+# Função para formatar como string com aspas para listas
+def formatar_lista_como_string(lista):
+    if isinstance(lista, list):
+        return '"' + ",".join(lista) + '"'
+    return lista
+
 # Cadastro de salas e laboratórios
 def cadastrar_sala():
     nome = input("Nome da sala ou laboratório: ")
@@ -70,6 +76,7 @@ def cadastrar_software_laboratorio():
         return
 
     softwares = input("Digite os softwares necessários (separados por vírgula): ").strip()
+    softwares = formatar_lista_como_string(softwares.split(","))
 
     novo_software = pd.DataFrame([{
         "Laboratorio": lab_nome,
@@ -84,7 +91,9 @@ def cadastrar_professor():
     nome = input("Nome do professor: ")
     area = input("Área de atuação (Desenvolvimento, Infra, Ambos): ").strip()
     modalidades = input("Modalidades (Presencial, EAD, Híbrido) [Separe por vírgula]: ").strip()
+    modalidades = formatar_lista_como_string(modalidades.split(","))
     disponibilidade = input("Disponibilidade (ex: Seg-Manhã, Qua-Noite) [Separe por vírgula]: ").strip()
+    disponibilidade = formatar_lista_como_string(disponibilidade.split(","))
 
     novo_professor = pd.DataFrame([{
         "Nome": nome,
@@ -150,6 +159,7 @@ def cadastrar_turma():
             print("Erro: Digite um número válido para a quantidade de alunos.")
 
     disciplinas = input("Disciplinas que essa turma cursará (separadas por vírgula): ").strip()
+    disciplinas = formatar_lista_como_string(disciplinas.split(","))
 
     nova_turma = pd.DataFrame([{
         "Curso": curso,
