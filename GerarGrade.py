@@ -23,13 +23,13 @@ def criar_grade_vazia():
 
 # Verifica se o professor está disponível no dia e horário
 def professor_disponivel(professor, dia, horario):
-    dias_disponiveis = professor["Dias_Disponiveis"].split(",")
-    horarios_disponiveis = professor["Horarios_Disponiveis"].split(",")
+    dias_disponiveis = professor["Dias_Disponiveis"].split(",") if isinstance(professor["Dias_Disponiveis"], str) else []
+    horarios_disponiveis = professor["Horarios_Disponiveis"].split(",") if isinstance(professor["Horarios_Disponiveis"], str) else []
     return dia in dias_disponiveis and horario in horarios_disponiveis
 
 # Verifica se a modalidade da disciplina é aceita pelo professor
 def modalidade_aceita(professor, tipo_disciplina):
-    modalidades_preferidas = professor["Modalidades_Preferidas"].split(",")
+    modalidades_preferidas = professor["Modalidades_Preferidas"].split(",") if isinstance(professor["Modalidades_Preferidas"], str) else []
     return tipo_disciplina in modalidades_preferidas
 
 # Verifica conflitos
@@ -137,7 +137,7 @@ def gerar_grade_completa():
             aulas_no_horario = grade[dia][horario]
             if aulas_no_horario:
                 for aula in aulas_no_horario:
-                    tabela_grade.append([
+                    tabela_grade.append([  
                         dia, horario, aula["Turma"], aula["Disciplina"], aula["Professor"], aula["Sala"]
                     ])
             else:
