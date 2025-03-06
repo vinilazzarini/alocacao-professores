@@ -1,4 +1,5 @@
 import pandas as pd
+import random
 import os
 
 # Arquivos CSV
@@ -6,223 +7,159 @@ ARQUIVO_PROFESSORES = "professores.csv"
 ARQUIVO_DISCIPLINAS = "disciplinas.csv"
 ARQUIVO_TURMAS = "turmas.csv"
 ARQUIVO_SALAS = "salas.csv"
-ARQUIVO_SOFTWARES = "softwares_laboratorio.csv"
 
-# Criar arquivos caso não existam
-for arquivo, colunas in [
-    (ARQUIVO_PROFESSORES, ["Nome", "Área", "Modalidades", "Disponibilidade"]),
-    (ARQUIVO_DISCIPLINAS, ["Nome", "Necessita_Lab", "Modalidade", "Créditos_Semanais", "Área"]),
-    (ARQUIVO_TURMAS, ["Curso", "Período", "Quantidade_Alunos", "Disciplinas"]),
-    (ARQUIVO_SALAS, ["Nome", "Tipo", "Capacidade"]),
-    (ARQUIVO_SOFTWARES, ["Laboratorio", "Softwares"])
-]:
-    if not os.path.exists(arquivo):
-        pd.DataFrame(columns=colunas).to_csv(arquivo, index=False)
+# Estrutura de horários
+HORARIOS_DIURNO = ["07:30-08:20", "08:20-09:10", "09:30-10:20", "10:20-11:10"]
+HORARIOS_NOTURNO = ["19:10-20:00", "20:00-20:50", "21:00-21:50", "21:50-22:40"]
+DIAS_SEMANA = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"]
 
 # Função para carregar dados do CSV
 def carregar_dados(arquivo):
-    return pd.read_csv(arquivo)
+    return pd.read_csv(arquivo) if os.path.exists(arquivo) else pd.DataFrame()
 
-# Função para formatar como string com aspas para listas
-def formatar_lista_como_string(lista):
-    if isinstance(lista, list):
-        return '"' + ",".join(lista) + '"'
-    return lista
+# Criar grade horária vazia (cada célula é uma lista para permitir múltiplas aulas, se necessário)
+def criar_grade_vazia():
+    return {dia: {h: [] for h in HORARIOS_DIURNO + HORARIOS_NOTURNO} for dia in DIAS_SEMANA}
 
-# Cadastro de salas e laboratórios
-def cadastrar_sala():
-    nome = input("Nome da sala ou laboratório: ")
-    tipo = input("Tipo (Sala / Laboratório): ").strip().lower()
-    
-    if tipo not in ["sala", "laboratório"]:
-        print("Erro: Escolha 'Sala' ou 'Laboratório'.")
-        return
-    
-    while True:
-        try:
-            capacidade = int(input("Capacidade máxima da sala/laboratório: "))
-            if capacidade <= 0:
-                print("Erro: Capacidade deve ser maior que zero.")
-                continue
-            break
-        except ValueError:
-            print("Erro: Digite um número válido para a capacidade.")
+# Função para verificar se o professor está disponível (usa a disponibilidade do professor, que contém strings como "Seg-Manhã")
+def professor_disponivel(professor, dia, horario):
+    disponibilidade = professor["Disponibilidade"].split(",") if isinstance(professor["Disponibilidade"], str) else []
+    dia_sigla = dia[:3]  # Ex: "Seg" para "Segunda"
+    # Verifica se algum item na disponibilidade começa com o dia
+    for disp in disponibilidade:
+        if disp.strip().startswith(dia_sigla):
+            return True
+    return False
 
-    nova_sala = pd.DataFrame([{
-        "Nome": nome,
-        "Tipo": tipo.capitalize(),
-        "Capacidade": capacidade
-    }])
+# Verifica se a modalidade (tipo de aula) da disciplina é aceita pelo professor
+def modalidade_aceita(professor, tipo_disciplina):
+    modalidades = professor["Modalidades"].split(",") if isinstance(professor["Modalidades"], str) else []
+    return tipo_disciplina in [m.strip() for m in modalidades]
 
-    nova_sala.to_csv(ARQUIVO_SALAS, mode='a', header=False, index=False)
-    print(f"{tipo.capitalize()} '{nome}' cadastrado com sucesso!")
+# Verifica conflitos: impede que o mesmo professor, turma ou sala tenham aula no mesmo horário
+def existe_conflito(grade, professor, turma, sala, dia, horario, tipo_disciplina):
+    if not professor_disponivel(professor, dia, horario) or not modalidade_aceita(professor, tipo_disciplina):
+        return True
+    for aula in grade[dia][horario]:
+        if aula["Professor"] == professor["Nome"] or aula["Turma"] == turma or aula["Sala"] == sala:
+            return True
+    return False
 
-# Cadastro de softwares para laboratórios (após alocação)
-def cadastrar_software_laboratorio():
-    laboratorios = carregar_dados(ARQUIVO_SALAS)
-    laboratorios = laboratorios[laboratorios["Tipo"] == "Laboratório"]
-
-    if laboratorios.empty:
-        print("Nenhum laboratório cadastrado!")
-        return
-
-    print("\nLaboratórios disponíveis:")
-    print(laboratorios)
-
-    lab_nome = input("\nDigite o nome do laboratório para adicionar softwares: ")
-
-    if lab_nome not in laboratorios["Nome"].values:
-        print("Erro: Laboratório não encontrado.")
-        return
-
-    softwares = input("Digite os softwares necessários (separados por vírgula): ").strip()
-    softwares = formatar_lista_como_string(softwares.split(","))
-
-    novo_software = pd.DataFrame([{
-        "Laboratorio": lab_nome,
-        "Softwares": softwares
-    }])
-
-    novo_software.to_csv(ARQUIVO_SOFTWARES, mode='a', header=False, index=False)
-    print(f"Softwares cadastrados para o laboratório {lab_nome}!")
-
-# Cadastro de professores
-def cadastrar_professor():
-    nome = input("Nome do professor: ")
-    area = input("Área de atuação (Desenvolvimento, Infra, Ambos): ").strip()
-    modalidades = input("Modalidades (Presencial, EAD, Híbrido) [Separe por vírgula]: ").strip()
-    modalidades = formatar_lista_como_string(modalidades.split(","))
-    disponibilidade = input("Disponibilidade (ex: Seg-Manhã, Qua-Noite) [Separe por vírgula]: ").strip()
-    disponibilidade = formatar_lista_como_string(disponibilidade.split(","))
-
-    novo_professor = pd.DataFrame([{
-        "Nome": nome,
-        "Área": area,
-        "Modalidades": modalidades,
-        "Disponibilidade": disponibilidade
-    }])
-
-    novo_professor.to_csv(ARQUIVO_PROFESSORES, mode='a', header=False, index=False)
-    print(f"Professor {nome} cadastrado com sucesso!")
-
-# Cadastro de disciplinas (com área)
-def cadastrar_disciplina():
-    nome = input("Nome da disciplina: ")
-    necessidade_lab = input("Precisa de laboratório? (Sim/Não): ").strip().lower() == "sim"
-    modalidade = input("Modalidade (Presencial, EAD, Híbrido): ").strip()
-
-    while True:
-        try:
-            creditos = int(input("Créditos Semanais (horas/aula por semana): ").strip())
-            if creditos <= 0:
-                print("Erro: O número de créditos semanais deve ser maior que zero.")
-                continue
-            break
-        except ValueError:
-            print("Erro: Digite um número válido para os créditos semanais.")
-    
-    area = input("Área da disciplina (ex: Desenvolvimento, Infraestrutura, Outros): ").strip()
-
-    nova_disciplina = pd.DataFrame([{
-        "Nome": nome,
-        "Necessita_Lab": necessidade_lab,
-        "Modalidade": modalidade,
-        "Créditos_Semanais": creditos,
-        "Área": area
-    }])
-
-    nova_disciplina.to_csv(ARQUIVO_DISCIPLINAS, mode='a', header=False, index=False)
-    print(f"Disciplina {nome} cadastrada com sucesso!")
-
-# Cadastro de turmas
-def cadastrar_turma():
-    curso = input("Nome do curso: ")
-    
-    while True:
-        try:
-            periodo = int(input("Período (1 a 8): "))
-            if periodo < 1 or periodo > 8:
-                print("Erro: O período deve estar entre 1 e 8.")
-                continue
-            break
-        except ValueError:
-            print("Erro: Digite um número válido para o período.")
-
-    while True:
-        try:
-            quantidade_alunos = int(input("Quantidade de alunos: "))
-            if quantidade_alunos <= 0:
-                print("Erro: A quantidade de alunos deve ser maior que zero.")
-                continue
-            break
-        except ValueError:
-            print("Erro: Digite um número válido para a quantidade de alunos.")
-
-    disciplinas = input("Disciplinas que essa turma cursará (separadas por vírgula): ").strip()
-    disciplinas = formatar_lista_como_string(disciplinas.split(","))
-
-    nova_turma = pd.DataFrame([{
-        "Curso": curso,
-        "Período": periodo,
-        "Quantidade_Alunos": quantidade_alunos,
-        "Disciplinas": disciplinas
-    }])
-
-    nova_turma.to_csv(ARQUIVO_TURMAS, mode='a', header=False, index=False)
-    print(f"Turma do curso {curso} cadastrada com sucesso!")
-
-# Exibir dados cadastrados
-def visualizar_dados():
+# Gerar grade para todas as turmas
+def gerar_grade_completa():
     professores = carregar_dados(ARQUIVO_PROFESSORES)
     disciplinas = carregar_dados(ARQUIVO_DISCIPLINAS)
     turmas = carregar_dados(ARQUIVO_TURMAS)
     salas = carregar_dados(ARQUIVO_SALAS)
-    softwares = carregar_dados(ARQUIVO_SOFTWARES)
 
-    print("\nProfessores Cadastrados:")
-    print(professores if not professores.empty else "Nenhum professor cadastrado.")
+    if professores.empty or disciplinas.empty or turmas.empty or salas.empty:
+        print("Erro: Todos os dados precisam estar cadastrados!")
+        return
 
-    print("\nDisciplinas Cadastradas:")
-    print(disciplinas if not disciplinas.empty else "Nenhuma disciplina cadastrada.")
+    grade = criar_grade_vazia()
 
-    print("\nTurmas Cadastradas:")
-    print(turmas if not turmas.empty else "Nenhuma turma cadastrada.")
+    # Agrupar as disciplinas pelas turmas que as cursam (turmas unificadas)
+    disciplinas_comuns = {}
+    for _, turma in turmas.iterrows():
+        # O campo "Disciplinas" foi armazenado entre aspas (ex: "Programação I,Banco de Dados,Algoritmos")
+        disciplinas_lista = turma["Disciplinas"].strip('"').split(",")
+        for disciplina_nome in disciplinas_lista:
+            disciplina_nome = disciplina_nome.strip()
+            if disciplina_nome not in disciplinas_comuns:
+                disciplinas_comuns[disciplina_nome] = []
+            disciplinas_comuns[disciplina_nome].append(turma["Curso"])
 
-    print("\nSalas e Laboratórios Cadastrados:")
-    print(salas if not salas.empty else "Nenhuma sala cadastrada.")
+    for disciplina_nome, turmas_com_disciplina in disciplinas_comuns.items():
+        disciplina_df = disciplinas[disciplinas["Nome"] == disciplina_nome]
+        if disciplina_df.empty:
+            continue
+        disciplina = disciplina_df.iloc[0]
+        creditos = int(disciplina["Créditos_Semanais"])
+        # Definir o tipo da disciplina com base no campo "Necessita_Lab": se True, usamos "Laboratório", caso contrário "Sala"
+        tipo_disciplina = "Laboratório" if str(disciplina["Necessita_Lab"]).lower() == "true" else "Sala"
 
-    print("\nSoftwares por Laboratório:")
-    print(softwares if not softwares.empty else "Nenhum software cadastrado.")
+        # Filtrar os professores disponíveis para essa disciplina
+        professores_disponiveis = professores[
+            (professores["Área"].str.contains(disciplina["Área"], case=False, na=False)) &
+            (professores["Modalidades"].str.contains(tipo_disciplina, case=False, na=False))
+        ]
+        if professores_disponiveis.empty:
+            print(f"⚠️ Nenhum professor disponível para {disciplina_nome}")
+            continue
+        professor = professores_disponiveis.sample(1).iloc[0]
 
-# Menu de interação
-def menu():
-    while True:
-        print("\n--- SISTEMA DE ALOCAÇÃO ---")
-        print("1. Cadastrar Professor")
-        print("2. Cadastrar Disciplina")
-        print("3. Cadastrar Turma")
-        print("4. Cadastrar Sala / Laboratório")
-        print("5. Cadastrar Softwares para Laboratórios")
-        print("6. Visualizar Dados")
-        print("7. Sair")
-        opcao = input("Escolha uma opção: ")
-
-        if opcao == "1":
-            cadastrar_professor()
-        elif opcao == "2":
-            cadastrar_disciplina()
-        elif opcao == "3":
-            cadastrar_turma()
-        elif opcao == "4":
-            cadastrar_sala()
-        elif opcao == "5":
-            cadastrar_software_laboratorio()
-        elif opcao == "6":
-            visualizar_dados()
-        elif opcao == "7":
-            print("Encerrando o sistema...")
-            break
+        # Filtrar as salas disponíveis para o tipo de disciplina
+        if tipo_disciplina == "Laboratório":
+            salas_disponiveis = salas[salas["Tipo"] == "Laboratório"]
+        elif tipo_disciplina == "Sala":
+            salas_disponiveis = salas[salas["Tipo"] == "Sala"]
         else:
-            print("Opção inválida, tente novamente.")
+            salas_disponiveis = salas
 
-menu()
+        if salas_disponiveis.empty:
+            print(f"⚠️ Nenhuma sala disponível para {disciplina_nome}")
+            continue
+        sala = salas_disponiveis.sample(1).iloc[0]
+
+        # Alocar cada crédito (bloco de aula) para cada turma que cursa a disciplina
+        for _ in range(creditos):
+            for turma_nome in turmas_com_disciplina:
+                turma_df = turmas[turmas["Curso"] == turma_nome]
+                if turma_df.empty:
+                    continue
+                turma_info = turma_df.iloc[0]
+                # Use o novo campo "Periodo" que contém "Matutino" ou "Noturno"
+                periodo_diario = turma_info["Periodo"].lower()
+                if periodo_diario == "matutino":
+                    horarios_disponiveis = HORARIOS_DIURNO
+                elif periodo_diario == "noturno":
+                    horarios_disponiveis = HORARIOS_NOTURNO
+                else:
+                    # Se o valor não for reconhecido, usa os horários diurnos por padrão
+                    horarios_disponiveis = HORARIOS_DIURNO
+
+                # Obter horários livres sem conflito
+                horarios_livres = [
+                    (d, h) for d in DIAS_SEMANA for h in horarios_disponiveis
+                    if not existe_conflito(grade, professor, turma_nome, sala["Nome"], d, h, tipo_disciplina)
+                ]
+                if not horarios_livres:
+                    print(f"⚠️ Não há horários suficientes para {disciplina_nome} ({turma_nome})")
+                    continue
+                dia, horario = random.choice(horarios_livres)
+                grade[dia][horario].append({
+                    "Disciplina": disciplina_nome,
+                    "Professor": professor["Nome"],
+                    "Sala": sala["Nome"],
+                    "Turma": turma_nome
+                })
+                print(f"Aula de {disciplina_nome} com {professor['Nome']} para a turma {turma_nome} alocada em {sala['Nome']} no {dia} {horario}")
+
+    # Verificar se cada professor tem pelo menos 2 aulas
+    for _, professor in professores.iterrows():
+        aulas_atribuidas = sum(
+            1 for dia in grade for horario in grade[dia] for aula in grade[dia][horario]
+            if aula["Professor"] == professor["Nome"]
+        )
+        if aulas_atribuidas < 2:
+            print(f"⚠️ Professor {professor['Nome']} tem apenas {aulas_atribuidas} aulas.")
+
+    # Criar tabela formatada para exibição
+    tabela_grade = []
+    for dia in DIAS_SEMANA:
+        for horario in HORARIOS_DIURNO + HORARIOS_NOTURNO:
+            aulas_no_horario = grade[dia][horario]
+            if aulas_no_horario:
+                for aula in aulas_no_horario:
+                    tabela_grade.append([dia, horario, aula["Turma"], aula["Disciplina"], aula["Professor"], aula["Sala"]])
+            else:
+                tabela_grade.append([dia, horario, "-", "-", "-", "-"])
+
+    df_grade = pd.DataFrame(tabela_grade, columns=["Dia", "Horário", "Turma", "Disciplina", "Professor", "Sala"])
+    df_grade.to_csv("grade_completa.csv", index=False)
+    print("\n✅ Grade horária completa gerada! Verifique 'grade_completa.csv'.\n")
+    print(df_grade.to_string(index=False))
+    return grade
+
+# Executar
+gerar_grade_completa()
