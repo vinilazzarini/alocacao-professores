@@ -1,0 +1,37 @@
+Curso,Semestre,Disciplina,Professor,Sala,Dia,Horário,Período
+Ciência da Computação,2,Computação em Nuvem,Pedro Santos,Sala 203,Quarta,19:10-20:00,Noturno
+Ciência da Computação,2,Computação em Nuvem,Pedro Santos,Sala 203,Quarta,20:00-20:50,Noturno
+Ciência da Computação,2,Computação em Nuvem,Pedro Santos,Sala 203,Quarta,21:50-22:40,Noturno
+Ciência da Computação,3,Machine Learning,Carlos Souza,Lab Info 2,Terça,07:30-08:20,Matutino
+Ciência da Computação,3,Machine Learning,Carlos Souza,Lab Info 2,Terça,08:20-09:10,Matutino
+Ciência da Computação,3,Machine Learning,Carlos Souza,Lab Info 2,Terça,09:30-10:20,Matutino
+Ciência da Computação,3,Machine Learning,Carlos Souza,Lab Info 2,Terça,10:20-11:10,Matutino
+Engenharia de Computação,1,Introdução à Programação,Marcos Andrade,Sala 101,Quarta,07:30-08:20,Matutino
+Engenharia de Computação,1,Introdução à Programação,Marcos Andrade,Sala 101,Quarta,08:20-09:10,Matutino
+Engenharia de Computação,1,Introdução à Programação,Marcos Andrade,Sala 101,Quarta,10:20-11:10,Matutino
+Engenharia de Computação,1,Matemática Discreta,Sofia Almeida,Sala 101,Quinta,07:30-08:20,Matutino
+Engenharia de Computação,1,Matemática Discreta,Sofia Almeida,Sala 101,Quinta,08:20-09:10,Matutino
+Engenharia de Computação,1,Matemática Discreta,Sofia Almeida,Sala 101,Quinta,09:30-10:20,Matutino
+Engenharia de Computação,1,Algoritmos,Sofia Almeida,Sala 101,Sexta,07:30-08:20,Matutino
+Engenharia de Computação,1,Algoritmos,Sofia Almeida,Sala 101,Sexta,08:20-09:10,Matutino
+Engenharia de Computação,1,Algoritmos,Sofia Almeida,Sala 101,Sexta,09:30-10:20,Matutino
+Engenharia de Computação,1,Algoritmos,Sofia Almeida,Sala 101,Sexta,10:20-11:10,Matutino
+Engenharia de Software,2,Programação Avançada,Sofia Almeida,Sala 101,Segunda,19:10-20:00,Noturno
+Engenharia de Software,1,Testes de Software,Carlos Souza,Sala 203,Segunda,19:10-20:00,Noturno
+Engenharia de Software,2,Programação Avançada,Sofia Almeida,Sala 101,Segunda,20:00-20:50,Noturno
+Engenharia de Software,1,Testes de Software,Carlos Souza,Sala 203,Segunda,20:00-20:50,Noturno
+Engenharia de Software,1,Testes de Software,Carlos Souza,Sala 203,Segunda,21:00-21:50,Noturno
+Engenharia de Software,2,Programação Avançada,Sofia Almeida,Sala 101,Segunda,21:50-22:40,Noturno
+Engenharia de Software,1,Programação I,Lucas Almeida,Lab Info 1,Sexta,19:10-20:00,Noturno
+Engenharia de Software,1,Programação I,Lucas Almeida,Lab Info 1,Sexta,20:00-20:50,Noturno
+Engenharia de Software,1,Programação I,Lucas Almeida,Lab Info 1,Sexta,21:00-21:50,Noturno
+Engenharia de Software,1,Programação I,Lucas Almeida,Lab Info 1,Sexta,21:50-22:40,Noturno
+Engenharia de Software,2,Engenharia de Software,João Silva,Sala 101,Terça,20:00-20:50,Noturno
+Engenharia de Software,2,Engenharia de Software,João Silva,Sala 101,Terça,21:50-22:40,Noturno
+Sistemas de Informação,1,Banco de Dados,Carlos Souza,Sala 102,Quarta,19:10-20:00,Noturno
+Sistemas de Informação,1,Banco de Dados,Carlos Souza,Sala 102,Quarta,20:00-20:50,Noturno
+Sistemas de Informação,1,Banco de Dados,Carlos Souza,Sala 102,Quarta,21:00-21:50,Noturno
+Sistemas de Informação,1,Banco de Dados,Carlos Souza,Sala 102,Quarta,21:50-22:40,Noturno
+Sistemas de Informação,3,Segurança da Informação,Marcos Andrade,Sala 203,Quinta,07:30-08:20,Matutino
+Sistemas de Informação,3,Segurança da Informação,Marcos Andrade,Sala 203,Quinta,08:20-09:10,Matutino
+Sistemas de Informação,3,Segurança da Informação,Marcos Andrade,Sala 203,Quinta,10:20-11:10,Matutino

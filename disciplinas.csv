@@ -1,0 +1,31 @@
+Nome,Necessita_Lab,Modalidade,Créditos_Semanais,Área
+Programação I,True,Presencial,4,Desenvolvimento
+Redes de Computadores,True,Híbrido,3,Infra
+Banco de Dados,False,Presencial,4,Desenvolvimento
+Sistemas Operacionais,True,Presencial,4,Infra
+Engenharia de Software,False,Híbrido,2,Desenvolvimento
+Computação em Nuvem,False,EAD,3,Infra
+Inteligência Artificial,True,Híbrido,4,Desenvolvimento
+Segurança da Informação,False,Presencial,3,Infra
+Desenvolvimento Web,True,Presencial,4,Desenvolvimento
+Arquitetura de Computadores,True,Híbrido,3,Infra
+Programação II,True,Presencial,4,Desenvolvimento
+Gestão de Projetos,False,Híbrido,2,Desenvolvimento
+Algoritmos,False,Presencial,4,Desenvolvimento
+Redes Avançadas,True,Híbrido,3,Infra
+Cloud Computing,False,EAD,3,Infra
+Machine Learning,True,Híbrido,4,Desenvolvimento
+Criptografia,False,Presencial,3,Infra
+Desenvolvimento Mobile,True,Presencial,4,Desenvolvimento
+Introdução à Programação,False,Presencial,3,Desconhecido
+Matemática Discreta,False,Presencial,3,Desconhecido
+Programação Avançada,False,Presencial,3,Desconhecido
+Gestão de TI,False,Presencial,3,Desconhecido
+Estruturas de Dados,False,Presencial,3,Desconhecido
+POO,False,Presencial,3,Desconhecido
+Sistemas Distribuídos,False,Presencial,3,Desconhecido
+Testes de Software,False,Presencial,3,Desconhecido
+Computação Gráfica,False,Presencial,3,Desconhecido
+Automação,False,Presencial,3,Desconhecido
+Processamento Digital de Sinais,False,Presencial,3,Desconhecido
+Robótica,False,Presencial,3,Desconhecido
