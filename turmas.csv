@@ -1,0 +1,11 @@
+Curso,Semestre,Periodo,Quantidade_Alunos,Disciplinas
+Engenharia de Computação,1,Matutino,40,"Introdução à Programação,Matemática Discreta,Algoritmos"
+Engenharia de Software,2,Noturno,35,"Engenharia de Software,Sistemas Operacionais,Programação Avançada"
+Sistemas de Informação,3,Matutino,30,"Redes de Computadores,Segurança da Informação,Gestão de TI"
+Ciência da Computação,2,Noturno,28,"Estruturas de Dados,Computação em Nuvem,Inteligência Artificial"
+Sistemas de Informação,1,Noturno,26,"Banco de Dados,Algoritmos,POO"
+Ciência da Computação,3,Matutino,24,"Machine Learning,Desenvolvimento Mobile,Criptografia"
+Engenharia de Software,1,Noturno,30,"Sistemas Distribuídos,Testes de Software,Programação I"
+Sistemas de Informação,2,Matutino,29,"Gestão de Projetos,Redes Avançadas,Computação Gráfica"
+Engenharia de Computação,4,Noturno,22,"Automação,Processamento Digital de Sinais,Robótica"
+
